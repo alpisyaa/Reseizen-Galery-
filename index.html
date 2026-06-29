@@ -129,6 +129,33 @@
     }
     .upload-btn svg { width: 16px; height: 16px; }
     #fileInput { display: none; }
+
+    /* ── LOGIN FAB (pojok kanan bawah) ── */
+    .login-fab {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(180,180,200,.16) 0%, rgba(140,140,165,.12) 100%);
+      border: 1px solid rgba(200,200,220,.22);
+      color: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      transition: background .2s, border-color .2s, transform .2s, color .2s;
+      z-index: 500;
+    }
+    .login-fab:hover {
+      background: linear-gradient(135deg, rgba(200,200,220,.24) 0%, rgba(160,160,185,.18) 100%);
+      border-color: rgba(200,200,220,.4);
+      color: var(--platinum);
+      transform: translateY(-2px);
+    }
+    .login-fab svg { width: 18px; height: 18px; }
+
     .photo-count {
       font-size: .8rem;
       color: var(--muted);
@@ -170,13 +197,12 @@
       padding: 0 24px 80px;
     }
     .gallery-grid {
-      columns: 4 220px;
-      column-gap: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      align-items: start;
     }
     .polaroid {
-      break-inside: avoid;
-      margin-bottom: 20px;
-      display: inline-block;
       width: 100%;
     }
     .polaroid-inner {
@@ -276,27 +302,83 @@
     .lightbox.open { display: flex; }
     .lightbox-inner {
       position: relative;
-      max-width: 680px;
+      max-width: 880px;
       width: 100%;
     }
     .lightbox-card {
       background: linear-gradient(160deg, #f4f4f6 0%, #e8e8ec 100%);
-      padding: 12px 12px 52px;
       box-shadow: 0 20px 80px rgba(0,0,0,.65), 0 2px 8px rgba(0,0,0,.3);
+      overflow: hidden;
+    }
+    .lightbox-layout {
+      display: flex;
+      align-items: stretch;
+    }
+    .lightbox-photo-panel {
+      flex: 1 1 60%;
+      min-width: 0;
+      padding: 12px 12px 20px;
+      display: flex;
+      flex-direction: column;
     }
     .lightbox-img {
       width: 100%;
-      max-height: 70vh;
+      max-height: 64vh;
       object-fit: contain;
       display: block;
     }
-    .lightbox-caption {
+    .lightbox-title {
       font-family: 'Caveat', cursive;
       font-size: 1.3rem;
       color: #3a3a3f;
       text-align: center;
       margin-top: 10px;
     }
+    .lightbox-note-panel {
+      flex: 0 0 280px;
+      background: rgba(0,0,0,.04);
+      border-left: 1px solid rgba(0,0,0,.08);
+      padding: 20px 20px;
+      display: flex;
+      flex-direction: column;
+      max-height: 64vh;
+    }
+    .lightbox-note-label {
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #8a8a92;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .lightbox-note-text {
+      font-size: .9rem;
+      line-height: 1.65;
+      color: #3a3a3f;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      flex: 1;
+    }
+    .lightbox-note-text:empty::before {
+      content: 'Belum ada catatan untuk foto ini.';
+      color: #aaaab0;
+      font-style: italic;
+    }
+    .lightbox-note-text::-webkit-scrollbar { width: 6px; }
+    .lightbox-note-text::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 100px; }
+    .lightbox-note-panel:empty { display: none; }
+
+    @media (max-width: 720px) {
+      .lightbox-layout { flex-direction: column; }
+      .lightbox-note-panel {
+        flex: 0 0 auto;
+        max-height: 28vh;
+        border-left: none;
+        border-top: 1px solid rgba(0,0,0,.08);
+      }
+    }
+
     .lightbox-close {
       position: absolute;
       top: -18px; right: -18px;
@@ -309,21 +391,163 @@
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background .2s, border-color .2s;
+      z-index: 2;
     }
     .lightbox-close:hover { background: var(--bg-card); border-color: rgba(200,200,220,.4); }
-    .lightbox-delete {
+    .lightbox-admin-actions {
       position: absolute;
       bottom: -50px; left: 50%; transform: translateX(-50%);
-      background: rgba(200,60,60,.12);
-      border: 1px solid rgba(200,60,60,.3);
-      color: #f08080;
+      display: flex;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .lb-action-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(200,200,220,.2);
+      color: var(--silver);
       border-radius: 8px;
-      padding: 7px 18px;
+      padding: 7px 14px;
       font-size: .8rem;
       cursor: pointer;
       transition: background .2s;
+      font-family: 'Inter', sans-serif;
     }
-    .lightbox-delete:hover { background: rgba(200,60,60,.25); }
+    .lb-action-btn:hover { background: rgba(255,255,255,.12); }
+    .lightbox-delete {
+      background: rgba(200,60,60,.12) !important;
+      border-color: rgba(200,60,60,.3) !important;
+      color: #f08080 !important;
+    }
+    .lightbox-delete:hover { background: rgba(200,60,60,.25) !important; }
+
+    /* ── EDIT MODAL (fixed-center, menimpa lightbox) ── */
+    .edit-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,12,.85);
+      z-index: 1400;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .edit-overlay.show { display: flex; }
+    .edit-card {
+      background: linear-gradient(160deg, #28282d 0%, #222226 100%);
+      border: 1px solid rgba(200,200,220,.15);
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      width: 100%;
+      max-width: 420px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .edit-card label {
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .edit-card input,
+    .edit-card textarea {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(200,200,220,.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--paper);
+      font-size: .85rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-bottom: 10px;
+      resize: vertical;
+    }
+    .edit-card input:focus,
+    .edit-card textarea:focus { border-color: rgba(200,200,220,.4); }
+    .lightbox-edit-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .lb-save-btn, .lb-cancel-btn {
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: .78rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .2s;
+    }
+    .lb-save-btn {
+      background: linear-gradient(135deg, rgba(200,200,220,.22) 0%, rgba(160,160,185,.16) 100%);
+      border: 1px solid rgba(200,200,220,.35);
+      color: var(--platinum);
+    }
+    .lb-save-btn:hover { background: linear-gradient(135deg, rgba(200,200,220,.3) 0%, rgba(160,160,185,.22) 100%); }
+    .lb-cancel-btn {
+      background: none;
+      border: 1px solid rgba(200,200,220,.15);
+      color: var(--muted);
+    }
+    .lb-cancel-btn:hover { color: var(--silver); }
+
+    /* ── UPLOAD META POPUP ── */
+    .upload-meta-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,12,.85);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .upload-meta-overlay.open { display: flex; }
+    .upload-meta-card {
+      background: linear-gradient(160deg, #28282d 0%, #222226 100%);
+      border: 1px solid rgba(200,200,220,.12);
+      border-radius: 16px;
+      padding: 24px 24px 20px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+    }
+    .upload-meta-eyebrow {
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: .05em;
+      margin-bottom: 12px;
+    }
+    .upload-meta-preview {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      background: rgba(0,0,0,.2);
+    }
+    .upload-meta-card label {
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .upload-meta-card input,
+    .upload-meta-card textarea {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(200,200,220,.15);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--paper);
+      font-size: .88rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-bottom: 14px;
+      resize: vertical;
+    }
+    .upload-meta-card input:focus,
+    .upload-meta-card textarea:focus { border-color: rgba(200,200,220,.4); }
+    .upload-meta-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
     /* ── TOAST ── */
     .toast {
@@ -486,7 +710,7 @@
     .logout-btn:hover { border-color: rgba(200,200,220,.35); color: var(--silver); }
 
     @media (max-width: 540px) {
-      .gallery-grid { columns: 2 160px; column-gap: 12px; }
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
       header h1 { font-size: 2rem; }
       .login-card { padding: 32px 24px 28px; }
     }
@@ -510,14 +734,17 @@
   <div class="login-card">
     <div class="login-icon">🔐</div>
     <h2>Area Admin</h2>
-    <p>Masukkan password untuk mengakses fitur upload dan kelola foto.</p>
+    <p>Masuk dengan email & password untuk mengakses fitur upload dan kelola foto.</p>
     <div class="login-input-wrap">
-      <input type="password" id="pwInput" placeholder="Password admin" onkeydown="if(event.key==='Enter') tryLogin()" />
+      <input type="email" id="emailInput" placeholder="Email admin" autocomplete="username" onkeydown="if(event.key==='Enter') document.getElementById('pwInput').focus()" />
+    </div>
+    <div class="login-input-wrap">
+      <input type="password" id="pwInput" placeholder="Password admin" autocomplete="current-password" onkeydown="if(event.key==='Enter') tryLogin()" />
       <button class="toggle-pw" onclick="togglePw()" title="Tampilkan/sembunyikan">
         <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
-    <button class="login-btn" onclick="tryLogin()">Masuk sebagai Admin</button>
+    <button class="login-btn" id="loginBtnEl" onclick="tryLogin()">Masuk sebagai Admin</button>
     <p class="login-error" id="loginError"></p>
   </div>
 </div>
@@ -534,14 +761,14 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     Upload Foto
   </button>
-  <!-- tombol login untuk pengunjung -->
-  <button class="upload-btn" id="loginTriggerBtn" onclick="openLogin()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    Admin Login
-  </button>
   <input type="file" id="fileInput" accept="image/*" multiple onchange="handleUpload(event)" />
   <span class="photo-count" id="photoCount">0 kenangan tersimpan</span>
 </div>
+
+<!-- TOMBOL LOGIN ADMIN (floating, pojok kanan bawah) -->
+<button class="login-fab" id="loginTriggerBtn" onclick="openLogin()" title="Admin Login">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+</button>
 
 <!-- UPLOAD PROGRESS -->
 <div class="upload-progress" id="uploadProgress">
@@ -549,6 +776,22 @@
     <div class="progress-bar-fill" id="progressFill"></div>
   </div>
   <p class="progress-label" id="progressLabel">Mengupload...</p>
+</div>
+
+<!-- POPUP ISI JUDUL & CAPTION SEBELUM UPLOAD -->
+<div class="upload-meta-overlay" id="uploadMetaOverlay">
+  <div class="upload-meta-card">
+    <p class="upload-meta-eyebrow" id="uploadMetaEyebrow">Foto 1 dari 1</p>
+    <img class="upload-meta-preview" id="uploadMetaPreview" src="" alt="" />
+    <label>Judul</label>
+    <input type="text" id="uploadMetaTitle" placeholder="Judul singkat foto ini..." maxlength="80" />
+    <label>Catatan / cerita (opsional)</label>
+    <textarea id="uploadMetaCaption" placeholder="Ceritakan momen di foto ini..." rows="3"></textarea>
+    <div class="upload-meta-actions">
+      <button class="lb-cancel-btn" onclick="skipUploadMeta()">Lewati foto ini</button>
+      <button class="lb-save-btn" id="uploadMetaNextBtn" onclick="confirmUploadMeta()">Lanjut</button>
+    </div>
+  </div>
 </div>
 
 <!-- GALLERY -->
@@ -564,12 +807,37 @@
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <div class="lightbox-inner">
-    <div class="lightbox-card">
-      <img class="lightbox-img" id="lightboxImg" src="" alt="" />
-      <p class="lightbox-caption" id="lightboxCaption"></p>
-    </div>
     <button class="lightbox-close" onclick="closeLightboxBtn()">✕</button>
-    <button class="lightbox-delete" id="lightboxDelete" style="display:none" onclick="deletePhoto()">🗑 Hapus foto ini</button>
+    <div class="lightbox-card">
+      <div class="lightbox-layout">
+        <div class="lightbox-photo-panel">
+          <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+          <p class="lightbox-title" id="lightboxTitle"></p>
+        </div>
+        <div class="lightbox-note-panel" id="lightboxNotePanel">
+          <span class="lightbox-note-label">Catatan</span>
+          <div class="lightbox-note-text" id="lightboxNoteText"></div>
+        </div>
+      </div>
+    </div>
+    <div class="lightbox-admin-actions" id="lightboxAdminActions" style="display:none">
+      <button class="lb-action-btn" onclick="openEditPanel()">✏️ Edit</button>
+      <button class="lb-action-btn lightbox-delete" onclick="deletePhoto()">🗑 Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PANEL (modal terpisah, di tengah screen, menimpa lightbox) -->
+<div class="edit-overlay" id="lightboxEditPanel">
+  <div class="edit-card">
+    <label>Judul</label>
+    <input type="text" id="editTitleInput" placeholder="Judul singkat foto ini..." maxlength="80" />
+    <label>Catatan / cerita</label>
+    <textarea id="editCaptionInput" placeholder="Ceritakan momen di foto ini..." rows="4"></textarea>
+    <div class="lightbox-edit-actions">
+      <button class="lb-cancel-btn" onclick="closeEditPanel()">Batal</button>
+      <button class="lb-save-btn" id="saveEditBtn" onclick="saveEdit()">Simpan</button>
+    </div>
   </div>
 </div>
 
@@ -581,22 +849,31 @@
 <script>
 // ── KONFIGURASI SUPABASE ────────────────────────────────
 const SUPABASE_URL = 'https://cwypvddoeekltndwnnfg.supabase.co';   // ← ganti dengan URL project Supabase kamu
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3eXB2ZGRvZWVrbHRuZHdubmZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzM3MTAsImV4cCI6MjA5ODI0OTcxMH0.c1lpLDonqctJIIXVpDkkMJpL7UT0eOmMfZ1QJOCbfSQ';                          // ← ganti dengan anon/public key
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3eXB2ZGRvZWVrbHRuZHdubmZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzM3MTAsImV4cCI6MjA5ODI0OTcxMH0.c1lpLDonqctJIIXVpDkkMJpL7UT0eOmMfZ1QJOCbfSQ';                          // ← ganti dengan anon/public key
 const BUCKET_NAME  = 'kenangan';                             // ← ganti dengan nama bucket kamu
-// ── PASSWORD ADMIN ─────────────────────────────────────
-const ADMIN_PASSWORD = 'RSZN';                  // ← ganti dengan password pilihanmu
 // ───────────────────────────────────────────────────────
+// Login admin sekarang pakai Supabase Auth (email & password sungguhan,
+// dibuat di dashboard Supabase → Authentication → Users).
+// Tidak ada password/key rahasia yang ditaruh di file ini lagi.
 
-const SESSION_KEY = 'galeri_admin_session';
-let isAdmin   = false;
-let photos    = [];
+const SESSION_KEY = 'galeri_admin_session'; // menyimpan access_token + refresh_token
+let isAdmin     = false;
+let accessToken = null;  // token user yang login, dipakai utk upload/delete
+let photos      = [];
 let activePhoto = null;
 
 // ── INIT ───────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  // cek session yang tersimpan
-  if (sessionStorage.getItem(SESSION_KEY) === 'true') {
-    setAdminMode(true, false);
+window.addEventListener('DOMContentLoaded', async () => {
+  // cek session yang tersimpan & coba refresh token-nya
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) {
+    try {
+      const { refresh_token } = JSON.parse(saved);
+      await refreshSession(refresh_token);
+      setAdminMode(true, false);
+    } catch (err) {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
   }
   fetchPhotos();
 });
@@ -607,28 +884,69 @@ function openLogin() {
   setTimeout(() => document.getElementById('pwInput').focus(), 80);
 }
 
-function tryLogin() {
-  const val = document.getElementById('pwInput').value;
-  const err = document.getElementById('loginError');
-  if (val === ADMIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, 'true');
+async function tryLogin() {
+  const email = document.getElementById('emailInput').value.trim();
+  const pw    = document.getElementById('pwInput').value;
+  const err   = document.getElementById('loginError');
+  const btn   = document.getElementById('loginBtnEl');
+
+  if (!email || !pw) {
+    err.textContent = 'Email dan password wajib diisi.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Memeriksa...';
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pw })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error_description || data.msg || 'Login gagal');
+
+    accessToken = data.access_token;
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token
+    }));
+
     document.getElementById('loginOverlay').classList.remove('open');
+    document.getElementById('emailInput').value = '';
     document.getElementById('pwInput').value = '';
     err.textContent = '';
     setAdminMode(true, true);
-  } else {
-    err.textContent = 'Password salah. Coba lagi.';
-    document.getElementById('pwInput').select();
-    // shake animation singkat
+  } catch (e) {
+    err.textContent = 'Login gagal: ' + e.message;
     const card = document.querySelector('.login-card');
     card.style.animation = 'none';
     card.offsetHeight; // reflow
     card.style.animation = 'shake .35s ease';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Masuk sebagai Admin';
   }
+}
+
+async function refreshSession(refreshToken) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || 'Sesi habis');
+  accessToken = data.access_token;
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token
+  }));
 }
 
 function logout() {
   sessionStorage.removeItem(SESSION_KEY);
+  accessToken = null;
   setAdminMode(false, false);
   toast('👋 Kamu sudah keluar dari mode admin.');
 }
@@ -638,7 +956,8 @@ function setAdminMode(on, showToast) {
   document.getElementById('uploadBtnEl').style.display   = on ? '' : 'none';
   document.getElementById('loginTriggerBtn').style.display = on ? 'none' : '';
   document.getElementById('adminBar').classList.toggle('show', on);
-  document.getElementById('lightboxDelete').style.display = (on && activePhoto !== null) ? '' : 'none';
+  document.getElementById('lightboxAdminActions').style.display = (on && activePhoto !== null) ? '' : 'none';
+  if (!on) closeEditPanel();
   if (showToast) toast('✅ Selamat datang, Admin!');
 }
 
@@ -658,33 +977,57 @@ function togglePw() {
 document.getElementById('loginOverlay').addEventListener('click', function(e) {
   if (e.target === this) this.classList.remove('open');
 });
+document.getElementById('lightboxEditPanel').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
 
 // ── SUPABASE API HELPERS ────────────────────────────────
-// READ  → anon key  (ikut RLS policy SELECT yang public)
-// WRITE → service_role key (bypass RLS, hanya dipakai saat admin login)
+// Semua request (read & write) pakai anon key di header 'apikey'.
+// Untuk WRITE (upload/delete), Authorization diisi access_token user yang
+// login (Supabase Auth) — bukan service_role key. Izin sesungguhnya
+// ditentukan oleh RLS policy "authenticated" di sisi Supabase.
 function sbHeaders(write = false) {
-  const key = write ? SUPABASE_SVC_KEY : SUPABASE_ANON_KEY;
   return {
-    'apikey': key,
-    'Authorization': `Bearer ${key}`,
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${write ? (accessToken || SUPABASE_ANON_KEY) : SUPABASE_ANON_KEY}`,
   };
+}
+
+async function parseError(res) {
+  if (res.status === 401) {
+    sessionStorage.removeItem(SESSION_KEY);
+    accessToken = null;
+    setAdminMode(false, false);
+    return 'Sesi admin sudah habis, silakan login lagi.';
+  }
+  try {
+    const e = await res.json();
+    return e.message || e.error_description || res.statusText;
+  } catch {
+    return res.statusText || 'Terjadi kesalahan.';
+  }
 }
 
 async function fetchPhotos() {
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/list/${BUCKET_NAME}?limit=500&offset=0`,
-      { headers: { ...sbHeaders(false), 'Content-Type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify({ prefix: '', delimiter: '' }) }
-    );
-    if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+    const [res, captionMap] = await Promise.all([
+      fetch(
+        `${SUPABASE_URL}/storage/v1/object/list/${BUCKET_NAME}?limit=500&offset=0`,
+        { headers: { ...sbHeaders(false), 'Content-Type': 'application/json' },
+          method: 'POST',
+          body: JSON.stringify({ prefix: '', delimiter: '' }) }
+      ),
+      fetchCaptions()
+    ]);
+    if (!res.ok) throw new Error(await parseError(res));
     const files = await res.json();
     photos = files
       .filter(f => f.name && /\.(jpe?g|png|gif|webp|avif)$/i.test(f.name))
       .map(f => ({
         name: f.name,
-        url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${f.name}`
+        url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${f.name}`,
+        title: (captionMap[f.name] && captionMap[f.name].title) || '',
+        caption: (captionMap[f.name] && captionMap[f.name].caption) || ''
       }));
     renderGallery();
   } catch (err) {
@@ -702,7 +1045,7 @@ async function uploadFile(file) {
       headers: { ...sbHeaders(true), 'Content-Type': file.type, 'x-upsert': 'false' },
       body: file }
   );
-  if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+  if (!res.ok) throw new Error(await parseError(res));
   return { name, url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${name}` };
 }
 
@@ -713,32 +1056,89 @@ async function deleteFile(name) {
       headers: { ...sbHeaders(true), 'Content-Type': 'application/json' },
       body: JSON.stringify({ prefixes: [name] }) }
   );
-  if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+  if (!res.ok) throw new Error(await parseError(res));
 }
 
 // ── UPLOAD HANDLER ─────────────────────────────────────
-async function handleUpload(e) {
+// Alur: pilih file(s) → utk tiap file, wajib isi Judul (+ caption opsional)
+// lewat popup sebelum benar2 diupload → baru lanjut ke proses upload.
+let pendingUploadFiles = [];   // [{file, title, caption}]
+let pendingUploadQueue = [];   // sisa File yang belum diisi metanya
+let pendingPreviewUrl  = null;
+
+function handleUpload(e) {
   if (!isAdmin) return;
   const files = Array.from(e.target.files);
+  e.target.value = '';
   if (!files.length) return;
+  pendingUploadFiles = [];
+  pendingUploadQueue = files;
+  showUploadMetaStep();
+}
+
+function showUploadMetaStep() {
+  if (!pendingUploadQueue.length) {
+    runUploadBatch();
+    return;
+  }
+  const total = pendingUploadFiles.length + pendingUploadQueue.length;
+  const current = pendingUploadFiles.length + 1;
+  const file = pendingUploadQueue[0];
+
+  if (pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+  pendingPreviewUrl = URL.createObjectURL(file);
+
+  document.getElementById('uploadMetaEyebrow').textContent = `Foto ${current} dari ${total}`;
+  document.getElementById('uploadMetaPreview').src = pendingPreviewUrl;
+  document.getElementById('uploadMetaTitle').value = '';
+  document.getElementById('uploadMetaCaption').value = '';
+  document.getElementById('uploadMetaOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('uploadMetaTitle').focus(), 80);
+}
+
+function confirmUploadMeta() {
+  const title   = document.getElementById('uploadMetaTitle').value.trim();
+  const caption = document.getElementById('uploadMetaCaption').value.trim();
+  if (!title) {
+    document.getElementById('uploadMetaTitle').focus();
+    toast('✏️ Judul wajib diisi.');
+    return;
+  }
+  const file = pendingUploadQueue.shift();
+  pendingUploadFiles.push({ file, title, caption });
+  showUploadMetaStep();
+}
+
+function skipUploadMeta() {
+  pendingUploadQueue.shift();
+  showUploadMetaStep();
+}
+
+async function runUploadBatch() {
+  document.getElementById('uploadMetaOverlay').classList.remove('open');
+  if (pendingPreviewUrl) { URL.revokeObjectURL(pendingPreviewUrl); pendingPreviewUrl = null; }
+  const items = pendingUploadFiles;
+  pendingUploadFiles = [];
+  if (!items.length) return;
+
   const prog  = document.getElementById('uploadProgress');
   const fill  = document.getElementById('progressFill');
   const label = document.getElementById('progressLabel');
   prog.style.display = 'block';
   let done = 0;
-  for (const file of files) {
-    label.textContent = `Mengupload ${file.name}…`;
+  for (const item of items) {
+    label.textContent = `Mengupload ${item.file.name}…`;
     try {
-      const photo = await uploadFile(file);
-      photos.unshift(photo);
+      const uploaded = await uploadFile(item.file);
+      await upsertCaption(uploaded.name, item.title, item.caption);
+      photos.unshift({ ...uploaded, title: item.title, caption: item.caption });
       done++;
-      fill.style.width = ((done / files.length) * 100) + '%';
+      fill.style.width = ((done / items.length) * 100) + '%';
     } catch (err) {
-      toast('❌ Gagal upload ' + file.name + ': ' + err.message);
+      toast('❌ Gagal upload ' + item.file.name + ': ' + err.message);
     }
   }
   setTimeout(() => { prog.style.display = 'none'; fill.style.width = '0%'; }, 800);
-  e.target.value = '';
   renderGallery();
   if (done) toast(`✅ ${done} foto berhasil diupload!`);
 }
@@ -753,7 +1153,7 @@ function renderGallery() {
   photos.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'polaroid';
-    const label = beautifyName(p.name);
+    const label = escapeHtml(displayTitle(p));
     card.innerHTML = `
       <div class="polaroid-inner" onclick="openLightbox(${i})">
         <img class="polaroid-img" src="${p.url}" alt="${label}" loading="lazy" />
@@ -761,6 +1161,12 @@ function renderGallery() {
       </div>`;
     grid.appendChild(card);
   });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function beautifyName(name) {
@@ -776,11 +1182,17 @@ function openLightbox(i) {
   activePhoto = i;
   const p = photos[i];
   document.getElementById('lightboxImg').src = p.url;
-  document.getElementById('lightboxImg').alt = beautifyName(p.name);
-  document.getElementById('lightboxCaption').textContent = beautifyName(p.name);
-  document.getElementById('lightboxDelete').style.display = isAdmin ? '' : 'none';
+  document.getElementById('lightboxImg').alt = displayTitle(p);
+  document.getElementById('lightboxTitle').textContent = displayTitle(p);
+  document.getElementById('lightboxNoteText').textContent = p.caption || '';
+  document.getElementById('lightboxAdminActions').style.display = isAdmin ? '' : 'none';
+  closeEditPanel();
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function displayTitle(p) {
+  return (p.title && p.title.trim()) ? p.title.trim() : beautifyName(p.name);
 }
 
 function closeLightbox(e) {
@@ -790,14 +1202,83 @@ function closeLightboxBtn() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
   activePhoto = null;
+  closeEditPanel();
+}
+
+// ── EDIT JUDUL & CATATAN ────────────────────────────────
+function openEditPanel() {
+  if (!isAdmin || activePhoto === null) return;
+  const p = photos[activePhoto];
+  document.getElementById('editTitleInput').value = p.title || '';
+  document.getElementById('editCaptionInput').value = p.caption || '';
+  document.getElementById('lightboxEditPanel').classList.add('show');
+}
+
+function closeEditPanel() {
+  document.getElementById('lightboxEditPanel').classList.remove('show');
+}
+
+async function saveEdit() {
+  if (!isAdmin || activePhoto === null) return;
+  const btn = document.getElementById('saveEditBtn');
+  const p = photos[activePhoto];
+  const newTitle   = document.getElementById('editTitleInput').value;
+  const newCaption = document.getElementById('editCaptionInput').value;
+
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+  try {
+    await upsertCaption(p.name, newTitle, newCaption);
+    p.title = newTitle;
+    p.caption = newCaption;
+
+    document.getElementById('lightboxTitle').textContent = displayTitle(p);
+    document.getElementById('lightboxNoteText').textContent = p.caption || '';
+    renderGallery();
+    closeEditPanel();
+    toast('✅ Perubahan disimpan.');
+  } catch (err) {
+    toast('❌ Gagal simpan: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Simpan';
+  }
+}
+
+async function fetchCaptions() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/photo_meta?select=file_name,title,caption`,
+      { headers: sbHeaders(false) }
+    );
+    if (!res.ok) return {};
+    const rows = await res.json();
+    const map = {};
+    rows.forEach(r => { map[r.file_name] = { title: r.title, caption: r.caption }; });
+    return map;
+  } catch {
+    return {};
+  }
+}
+
+async function upsertCaption(fileName, title, caption) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/photo_meta`,
+    { method: 'POST',
+      headers: { ...sbHeaders(true), 'Content-Type': 'application/json',
+                 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ file_name: fileName, title, caption, updated_at: new Date().toISOString() }) }
+  );
+  if (!res.ok) throw new Error(await parseError(res));
 }
 
 async function deletePhoto() {
   if (!isAdmin || activePhoto === null) return;
   const p = photos[activePhoto];
-  if (!confirm(`Hapus "${beautifyName(p.name)}"? Ini tidak bisa dibatalkan.`)) return;
+  if (!confirm(`Hapus "${displayTitle(p)}"? Ini tidak bisa dibatalkan.`)) return;
   try {
     await deleteFile(p.name);
+    deleteCaption(p.name); // best-effort, gak perlu blokir kalau gagal
     photos.splice(activePhoto, 1);
     closeLightboxBtn();
     renderGallery();
@@ -805,6 +1286,15 @@ async function deletePhoto() {
   } catch (err) {
     toast('❌ Gagal hapus: ' + err.message);
   }
+}
+
+async function deleteCaption(fileName) {
+  try {
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/photo_meta?file_name=eq.${encodeURIComponent(fileName)}`,
+      { method: 'DELETE', headers: sbHeaders(true) }
+    );
+  } catch { /* abaikan, bukan kritis */ }
 }
 
 // ── TOAST ──────────────────────────────────────────────
