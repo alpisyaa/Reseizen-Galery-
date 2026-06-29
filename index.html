@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kenangan SMP · Galeri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-dark:   #1c1c1e;
+      --bg-mid:    #2a2a2e;
+      --bg-card:   #323236;
+      --silver:    #d4d4d8;
+      --platinum:  #e8e8ec;
+      --accent:    #a8a8b3;
+      --highlight: #c9c9d4;
+      --muted:     #6e6e7a;
+      --paper:     #f2f2f5;
+      --white:     #ffffff;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 110% 55% at 20% 0%,   rgba(180,180,200,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 80%  60% at 80% 100%, rgba(140,140,165,.06) 0%, transparent 55%),
+        linear-gradient(160deg, #1c1c1e 0%, #232328 40%, #1e1e22 70%, #18181b 100%);
+      background-attachment: fixed;
+      color: var(--platinum);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      text-align: center;
+      padding: 64px 24px 44px;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(200,200,220,.10) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 30% at 50%  0%,  rgba(255,255,255,.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,200,220,.15) 30%, rgba(200,200,220,.15) 70%, transparent);
+    }
+    .header-eyebrow {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--highlight);
+      letter-spacing: .1em;
+      margin-bottom: 12px;
+      opacity: .85;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--paper);
+      text-shadow: 0 2px 24px rgba(0,0,0,.4);
+    }
+    header h1 em {
+      font-style: italic;
+      background: linear-gradient(120deg, var(--platinum) 0%, var(--silver) 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub {
+      margin-top: 14px;
+      font-size: .9rem;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: .06em;
+    }
+    .tape {
+      display: inline-block;
+      width: 48px; height: 14px;
+      background: rgba(200,200,220,.18);
+      border-radius: 2px;
+      margin: 0 6px;
+      vertical-align: middle;
+      transform: rotate(-2deg);
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      max-width: 1100px;
+      margin: 0 auto 32px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+    }
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(180,180,200,.14) 0%, rgba(140,140,165,.10) 100%);
+      border: 1px solid rgba(200,200,220,.25);
+      color: var(--platinum);
+      border-radius: 10px;
+      padding: 9px 18px;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .15s;
+    }
+    .upload-btn:hover {
+      background: linear-gradient(135deg, rgba(200,200,220,.22) 0%, rgba(160,160,185,.16) 100%);
+      border-color: rgba(200,200,220,.45);
+      transform: translateY(-1px);
+    }
+    .upload-btn svg { width: 16px; height: 16px; }
+    #fileInput { display: none; }
+    .photo-count {
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+    }
+
+    /* ── UPLOAD PROGRESS ── */
+    .upload-progress {
+      display: none;
+      max-width: 1100px;
+      margin: 0 auto 24px;
+      padding: 0 24px;
+    }
+    .progress-bar-wrap {
+      background: rgba(255,255,255,.07);
+      border-radius: 100px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--muted), var(--silver), var(--platinum));
+      border-radius: 100px;
+      width: 0%;
+      transition: width .3s ease;
+    }
+    .progress-label {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* ── GALLERY GRID ── */
+    .gallery-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    .gallery-grid {
+      columns: 4 220px;
+      column-gap: 20px;
+    }
+    .polaroid {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      display: inline-block;
+      width: 100%;
+    }
+    .polaroid-inner {
+      background: linear-gradient(160deg, #f4f4f6 0%, #eaeaed 100%);
+      padding: 10px 10px 36px;
+      box-shadow:
+        0 2px 8px rgba(0,0,0,.35),
+        0 8px 28px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.7);
+      position: relative;
+      cursor: pointer;
+      transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s;
+    }
+    /* slight random tilt per card via nth-child */
+    .polaroid:nth-child(3n+1) .polaroid-inner { transform: rotate(-1.5deg); }
+    .polaroid:nth-child(3n+2) .polaroid-inner { transform: rotate(1.2deg); }
+    .polaroid:nth-child(3n+3) .polaroid-inner { transform: rotate(-0.6deg); }
+    .polaroid-inner:hover {
+      transform: rotate(0deg) scale(1.04) !important;
+      box-shadow:
+        0 4px 12px rgba(0,0,0,.4),
+        0 16px 48px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.7);
+      z-index: 10;
+    }
+    .polaroid-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--bg-mid);
+    }
+    .polaroid-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+    }
+    .polaroid-caption span {
+      font-family: 'Caveat', cursive;
+      font-size: .92rem;
+      color: #3a3a3f;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── TAPE DECORATION ── */
+    .polaroid-inner::before {
+      content: '';
+      position: absolute;
+      top: -10px; left: 50%; transform: translateX(-50%);
+      width: 44px; height: 18px;
+      background: linear-gradient(135deg, rgba(210,210,225,.6) 0%, rgba(185,185,205,.45) 100%);
+      border-radius: 3px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      display: none;
+    }
+    .empty-state.show { display: block; }
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--silver);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,12,.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      position: relative;
+      max-width: 680px;
+      width: 100%;
+    }
+    .lightbox-card {
+      background: linear-gradient(160deg, #f4f4f6 0%, #e8e8ec 100%);
+      padding: 12px 12px 52px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.65), 0 2px 8px rgba(0,0,0,.3);
+    }
+    .lightbox-img {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      display: block;
+    }
+    .lightbox-caption {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: #3a3a3f;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -18px; right: -18px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--bg-mid);
+      border: 1px solid rgba(200,200,220,.2);
+      color: var(--silver);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, border-color .2s;
+    }
+    .lightbox-close:hover { background: var(--bg-card); border-color: rgba(200,200,220,.4); }
+    .lightbox-delete {
+      position: absolute;
+      bottom: -50px; left: 50%; transform: translateX(-50%);
+      background: rgba(200,60,60,.12);
+      border: 1px solid rgba(200,60,60,.3);
+      color: #f08080;
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .lightbox-delete:hover { background: rgba(200,60,60,.25); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: rgba(40,40,45,.96);
+      border: 1px solid rgba(200,200,220,.15);
+      color: var(--platinum);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: .85rem;
+      backdrop-filter: blur(10px);
+      transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
+      opacity: 0;
+      z-index: 2000;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: .75rem;
+      color: rgba(110,110,122,.5);
+      letter-spacing: .06em;
+    }
+
+    /* ── LOGIN MODAL ── */
+    .login-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,10,12,.82);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(12px);
+    }
+    .login-overlay.open { display: flex; }
+    .login-card {
+      background: linear-gradient(160deg, #28282d 0%, #222226 100%);
+      border: 1px solid rgba(200,200,220,.12);
+      border-radius: 18px;
+      padding: 40px 36px 36px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.4);
+      text-align: center;
+    }
+    .login-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+    .login-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--paper);
+      margin-bottom: 6px;
+    }
+    .login-card p {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .login-input-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .login-input-wrap input {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(200,200,220,.15);
+      border-radius: 10px;
+      padding: 11px 44px 11px 16px;
+      color: var(--paper);
+      font-size: .9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color .2s, background .2s;
+      letter-spacing: .08em;
+    }
+    .login-input-wrap input:focus {
+      border-color: rgba(200,200,220,.4);
+      background: rgba(255,255,255,.09);
+    }
+    .login-input-wrap input::placeholder { color: rgba(110,110,122,.6); letter-spacing: 0; }
+    .toggle-pw {
+      position: absolute;
+      right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      padding: 4px; line-height: 1;
+      transition: color .2s;
+    }
+    .toggle-pw:hover { color: var(--silver); }
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(200,200,220,.18) 0%, rgba(160,160,185,.12) 100%);
+      border: 1px solid rgba(200,200,220,.28);
+      color: var(--platinum);
+      border-radius: 10px;
+      padding: 11px;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .login-btn:hover {
+      background: linear-gradient(135deg, rgba(200,200,220,.26) 0%, rgba(160,160,185,.20) 100%);
+      border-color: rgba(200,200,220,.45);
+      transform: translateY(-1px);
+    }
+    .login-btn:active { transform: translateY(0); }
+    .login-error {
+      margin-top: 12px;
+      font-size: .8rem;
+      color: #f08080;
+      min-height: 18px;
+      transition: opacity .2s;
+    }
+
+    /* ── ADMIN BAR ── */
+    .admin-bar {
+      display: none;
+      max-width: 1100px;
+      margin: -16px auto 24px;
+      padding: 0 24px;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .admin-bar.show { display: flex; }
+    .admin-badge {
+      font-size: .75rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+    }
+    .admin-badge span {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #6fcf97;
+      margin-right: 6px;
+      vertical-align: middle;
+      box-shadow: 0 0 6px rgba(111,207,151,.5);
+    }
+    .logout-btn {
+      background: none;
+      border: 1px solid rgba(200,200,220,.15);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 5px 14px;
+      font-size: .75rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: border-color .2s, color .2s;
+    }
+    .logout-btn:hover { border-color: rgba(200,200,220,.35); color: var(--silver); }
+
+    @media (max-width: 540px) {
+      .gallery-grid { columns: 2 160px; column-gap: 12px; }
+      header h1 { font-size: 2rem; }
+      .login-card { padding: 32px 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <p class="header-eyebrow">📷 &nbsp;Kenangan yang tak terlupakan</p>
+  <h1>Galeri<br><em>Masa SMP</em></h1>
+  <p class="header-sub">
+    <span class="tape"></span>
+    Simpan setiap momen, selamanya
+    <span class="tape"></span>
+  </p>
+</header>
+
+<!-- LOGIN MODAL -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <h2>Area Admin</h2>
+    <p>Masukkan password untuk mengakses fitur upload dan kelola foto.</p>
+    <div class="login-input-wrap">
+      <input type="password" id="pwInput" placeholder="Password admin" onkeydown="if(event.key==='Enter') tryLogin()" />
+      <button class="toggle-pw" onclick="togglePw()" title="Tampilkan/sembunyikan">
+        <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <button class="login-btn" onclick="tryLogin()">Masuk sebagai Admin</button>
+    <p class="login-error" id="loginError"></p>
+  </div>
+</div>
+
+<!-- ADMIN BAR -->
+<div class="admin-bar" id="adminBar">
+  <span class="admin-badge"><span></span>Mode Admin</span>
+  <button class="logout-btn" onclick="logout()">Keluar</button>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="upload-btn" id="uploadBtnEl" style="display:none" onclick="document.getElementById('fileInput').click()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Upload Foto
+  </button>
+  <!-- tombol login untuk pengunjung -->
+  <button class="upload-btn" id="loginTriggerBtn" onclick="openLogin()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    Admin Login
+  </button>
+  <input type="file" id="fileInput" accept="image/*" multiple onchange="handleUpload(event)" />
+  <span class="photo-count" id="photoCount">0 kenangan tersimpan</span>
+</div>
+
+<!-- UPLOAD PROGRESS -->
+<div class="upload-progress" id="uploadProgress">
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <p class="progress-label" id="progressLabel">Mengupload...</p>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-section">
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🎒</div>
+    <h3>Galeri masih kosong</h3>
+    <p>Upload foto pertamamu menggunakan tombol di atas.<br>Semua kenangan layak untuk diingat.</p>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-inner">
+    <div class="lightbox-card">
+      <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+    </div>
+    <button class="lightbox-close" onclick="closeLightboxBtn()">✕</button>
+    <button class="lightbox-delete" id="lightboxDelete" style="display:none" onclick="deletePhoto()">🗑 Hapus foto ini</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<footer>Dibuat dengan ❤️ &nbsp;·&nbsp; Kenangan SMP</footer>
+
+<script>
+// ── KONFIGURASI SUPABASE ────────────────────────────────
+const SUPABASE_URL = 'https://cwypvddoeekltndwnnfg.supabase.co';   // ← ganti dengan URL project Supabase kamu
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3eXB2ZGRvZWVrbHRuZHdubmZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzM3MTAsImV4cCI6MjA5ODI0OTcxMH0.c1lpLDonqctJIIXVpDkkMJpL7UT0eOmMfZ1QJOCbfSQ';                          // ← ganti dengan anon/public key
+const BUCKET_NAME  = 'kenangan';                             // ← ganti dengan nama bucket kamu
+// ── PASSWORD ADMIN ─────────────────────────────────────
+const ADMIN_PASSWORD = 'RSZN';                  // ← ganti dengan password pilihanmu
+// ───────────────────────────────────────────────────────
+
+const SESSION_KEY = 'galeri_admin_session';
+let isAdmin   = false;
+let photos    = [];
+let activePhoto = null;
+
+// ── INIT ───────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // cek session yang tersimpan
+  if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+    setAdminMode(true, false);
+  }
+  fetchPhotos();
+});
+
+// ── AUTH ───────────────────────────────────────────────
+function openLogin() {
+  document.getElementById('loginOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('pwInput').focus(), 80);
+}
+
+function tryLogin() {
+  const val = document.getElementById('pwInput').value;
+  const err = document.getElementById('loginError');
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    document.getElementById('loginOverlay').classList.remove('open');
+    document.getElementById('pwInput').value = '';
+    err.textContent = '';
+    setAdminMode(true, true);
+  } else {
+    err.textContent = 'Password salah. Coba lagi.';
+    document.getElementById('pwInput').select();
+    // shake animation singkat
+    const card = document.querySelector('.login-card');
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = 'shake .35s ease';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  setAdminMode(false, false);
+  toast('👋 Kamu sudah keluar dari mode admin.');
+}
+
+function setAdminMode(on, showToast) {
+  isAdmin = on;
+  document.getElementById('uploadBtnEl').style.display   = on ? '' : 'none';
+  document.getElementById('loginTriggerBtn').style.display = on ? 'none' : '';
+  document.getElementById('adminBar').classList.toggle('show', on);
+  document.getElementById('lightboxDelete').style.display = (on && activePhoto !== null) ? '' : 'none';
+  if (showToast) toast('✅ Selamat datang, Admin!');
+}
+
+function togglePw() {
+  const inp  = document.getElementById('pwInput');
+  const icon = document.getElementById('eyeIcon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+// tutup modal klik luar
+document.getElementById('loginOverlay').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// ── SUPABASE API HELPERS ────────────────────────────────
+// READ  → anon key  (ikut RLS policy SELECT yang public)
+// WRITE → service_role key (bypass RLS, hanya dipakai saat admin login)
+function sbHeaders(write = false) {
+  const key = write ? SUPABASE_SVC_KEY : SUPABASE_ANON_KEY;
+  return {
+    'apikey': key,
+    'Authorization': `Bearer ${key}`,
+  };
+}
+
+async function fetchPhotos() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/list/${BUCKET_NAME}?limit=500&offset=0`,
+      { headers: { ...sbHeaders(false), 'Content-Type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify({ prefix: '', delimiter: '' }) }
+    );
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+    const files = await res.json();
+    photos = files
+      .filter(f => f.name && /\.(jpe?g|png|gif|webp|avif)$/i.test(f.name))
+      .map(f => ({
+        name: f.name,
+        url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${f.name}`
+      }));
+    renderGallery();
+  } catch (err) {
+    toast('❌ Gagal memuat galeri: ' + err.message);
+    showEmpty(true);
+  }
+}
+
+async function uploadFile(file) {
+  const ext  = file.name.split('.').pop();
+  const name = `kenangan_${Date.now()}_${Math.random().toString(36).slice(2,7)}.${ext}`;
+  const res  = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}/${name}`,
+    { method: 'POST',
+      headers: { ...sbHeaders(true), 'Content-Type': file.type, 'x-upsert': 'false' },
+      body: file }
+  );
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+  return { name, url: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${name}` };
+}
+
+async function deleteFile(name) {
+  const res = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}`,
+    { method: 'DELETE',
+      headers: { ...sbHeaders(true), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prefixes: [name] }) }
+  );
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.statusText); }
+}
+
+// ── UPLOAD HANDLER ─────────────────────────────────────
+async function handleUpload(e) {
+  if (!isAdmin) return;
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const prog  = document.getElementById('uploadProgress');
+  const fill  = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  prog.style.display = 'block';
+  let done = 0;
+  for (const file of files) {
+    label.textContent = `Mengupload ${file.name}…`;
+    try {
+      const photo = await uploadFile(file);
+      photos.unshift(photo);
+      done++;
+      fill.style.width = ((done / files.length) * 100) + '%';
+    } catch (err) {
+      toast('❌ Gagal upload ' + file.name + ': ' + err.message);
+    }
+  }
+  setTimeout(() => { prog.style.display = 'none'; fill.style.width = '0%'; }, 800);
+  e.target.value = '';
+  renderGallery();
+  if (done) toast(`✅ ${done} foto berhasil diupload!`);
+}
+
+// ── RENDER ─────────────────────────────────────────────
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  showEmpty(photos.length === 0);
+  document.getElementById('photoCount').textContent =
+    photos.length + ' kenangan tersimpan';
+  grid.innerHTML = '';
+  photos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'polaroid';
+    const label = beautifyName(p.name);
+    card.innerHTML = `
+      <div class="polaroid-inner" onclick="openLightbox(${i})">
+        <img class="polaroid-img" src="${p.url}" alt="${label}" loading="lazy" />
+        <div class="polaroid-caption"><span>${label}</span></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function beautifyName(name) {
+  return name.replace(/^kenangan_\d+_[a-z0-9]+\./i, '').replace(/_/g,' ').split('.')[0] || name;
+}
+
+function showEmpty(show) {
+  document.getElementById('emptyState').classList.toggle('show', show);
+}
+
+// ── LIGHTBOX ───────────────────────────────────────────
+function openLightbox(i) {
+  activePhoto = i;
+  const p = photos[i];
+  document.getElementById('lightboxImg').src = p.url;
+  document.getElementById('lightboxImg').alt = beautifyName(p.name);
+  document.getElementById('lightboxCaption').textContent = beautifyName(p.name);
+  document.getElementById('lightboxDelete').style.display = isAdmin ? '' : 'none';
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox(e) {
+  if (e.target === document.getElementById('lightbox')) closeLightboxBtn();
+}
+function closeLightboxBtn() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  activePhoto = null;
+}
+
+async function deletePhoto() {
+  if (!isAdmin || activePhoto === null) return;
+  const p = photos[activePhoto];
+  if (!confirm(`Hapus "${beautifyName(p.name)}"? Ini tidak bisa dibatalkan.`)) return;
+  try {
+    await deleteFile(p.name);
+    photos.splice(activePhoto, 1);
+    closeLightboxBtn();
+    renderGallery();
+    toast('🗑 Foto dihapus.');
+  } catch (err) {
+    toast('❌ Gagal hapus: ' + err.message);
+  }
+}
+
+// ── TOAST ──────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ── KEYBOARD ───────────────────────────────────────────
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightboxBtn(); });
+</script>
+
+<style>
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(5px); }
+  }
+</style>
+</body>
+</html>
