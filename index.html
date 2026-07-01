@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galeri Reseizen</title>
+  <link rel="icon" type="image/png" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500&family=Caveat:wght@400;600&display=swap" rel="stylesheet" />
@@ -714,9 +715,101 @@
       header h1 { font-size: 2rem; }
       .login-card { padding: 32px 24px 28px; }
     }
+
+    /* ── BRAND (pojok kiri atas) ── */
+    .brand-corner {
+      position: fixed;
+      top: 18px; left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 500;
+    }
+    .brand-corner img {
+      width: 38px; height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.4));
+    }
+    .brand-corner-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .brand-corner-text .brand-line1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: .22em;
+      color: var(--platinum);
+    }
+    .brand-corner-text .brand-line2 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: .5rem;
+      letter-spacing: .215em;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* ── INSTAGRAM (pojok kanan atas) ── */
+    .ig-corner {
+      position: fixed;
+      top: 18px; right: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 100px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(200,200,220,.18);
+      color: var(--silver);
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .01em;
+      backdrop-filter: blur(8px);
+      transition: background .2s, border-color .2s, transform .2s, color .2s;
+      z-index: 500;
+    }
+    .ig-corner:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(200,200,220,.4);
+      color: var(--platinum);
+      transform: translateY(-1px);
+    }
+    .ig-corner svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+    @media (max-width: 540px) {
+      .brand-corner { top: 12px; left: 12px; gap: 7px; }
+      .brand-corner img { width: 28px; height: 28px; }
+      .brand-corner-text .brand-line1 { font-size: .8rem; letter-spacing: .18em; }
+      .brand-corner-text .brand-line2 { font-size: .4rem; letter-spacing: .17em; }
+      .ig-corner { top: 12px; right: 12px; padding: 6px 10px; font-size: .68rem; }
+      .ig-corner svg { width: 15px; height: 15px; }
+      .ig-corner span { display: none; }
+    }
   </style>
 </head>
 <body>
+
+<!-- BRAND (pojok kiri atas) -->
+<div class="brand-corner">
+  <img src="logo.png" alt="RSZN Generation logo" />
+  <div class="brand-corner-text">
+    <span class="brand-line1">RSZN</span>
+    <span class="brand-line2">GENERATION</span>
+  </div>
+</div>
+
+<!-- INSTAGRAM (pojok kanan atas) -->
+<a class="ig-corner" href="https://instagram.com/reseizen_gen" target="_blank" rel="noopener noreferrer">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+  <span>@reseizen_gen</span>
+</a>
 
 <!-- HEADER -->
 <header>
